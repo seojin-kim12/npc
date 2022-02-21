@@ -14,12 +14,9 @@ local composer = require "composer"
 
 -- event listeners for tab buttons:
 local function onFirstView( event )
-	composer.gotoScene( "view1" )
+	composer.gotoScene( "startView" )
 end
 
-local function onSecondView( event )
-	composer.gotoScene( "view2" )
-end
 
 
 -- create a tabBar widget with two buttons at the bottom of the screen

@@ -16,44 +16,100 @@ function scene:create( event )
 	background.y = display.contentHeight / 2
 	sceneGroup:insert(background)
 
-	--주인공
-	local j = display.newImage("이미지/캐릭터/주인공.png")
-	j.x = display.contentWidth * 0.8
-	j.y = display.contentHeight / 2
-	sceneGroup:insert(j)
 
-	--토끼친구
-	--[[local t = display.newImage("이미지/캐릭터/토끼친구.png")
-	t.x = display.contentWidth * 0.2
-	t.y = display.contentHeight / 2
-	sceneGroup:insert(t)]]
+	--캐릭터 배열
 
-	--곰친구
-	--[[local g = display.newImage("이미지/캐릭터/곰친구.png")
-	g.x = display.contentWidth * 0.3
-	g.y = display.contentHeight / 2
-	sceneGroup:insert(g)]]
+	--캐릭터 배열 생성
+	local c={}
+	--캐릭터 배열에 캐릭터 이미지 담기
+	c[1] = display.newImage("이미지/캐릭터/주인공.png",display.contentWidth * 0.8,display.contentHeight / 2)
+	c[2] = display.newImage("이미지/캐릭터/다람쥐친구.png",display.contentWidth * 0.2,display.contentHeight / 2)
+	c[3] = display.newImage("이미지/캐릭터/곰친구.png",display.contentWidth * 0.2,display.contentHeight / 2)
+	c[4] = display.newImage("이미지/캐릭터/토끼친구.png",display.contentWidth * 0.2,display.contentHeight / 2)
+	c[5] = display.newImage("이미지/캐릭터/주인공.png",display.contentWidth * 0.8,display.contentHeight / 2)
 
-	--다람쥐 친구
-	local d = display.newImage("이미지/캐릭터/다람쥐친구.png")
-	d.x = display.contentWidth * 0.2
-	d.y = display.contentHeight / 2
-	sceneGroup:insert(d)
+    --처음 등장할 캐릭터 외의 캐릭터들은 투명도를 0으로
+	for i=2,5 do
+		c[i].alpha=0
+	end
+	--모든 캐릭터 객체는 씬그룹에 넣기
+	for i=1,5 do
+		sceneGroup:insert(c[i])
+	end
 
-	local forlog = display.newImageRect("이미지/채팅창/채팅창_주인공.png", 1920, 1080)
-	forlog.x = display.contentWidth /2
-	forlog.y = display.contentHeight / 2
-	forlog.text = "자! 다들 먹고 싶은거 편히 말해봐"
-	sceneGroup:insert(forlog)
+	--채팅창 배열
+
+	--채팅창 배열 생성
+	local t={}
+	--채팅창 배열에 채팅창 이미지 담기
+	t[1] = display.newImageRect("이미지/채팅창/채팅창주인공.png",1920,1080)
+	t[2] = display.newImageRect("이미지/채팅창/채팅창다람쥐.png",1920,1080)
+	t[3] = display.newImageRect("이미지/채팅창/채팅창곰.png",1920,1080)
+	t[4] = display.newImageRect("이미지/채팅창/채팅창토끼.png",1920,1080)
+	t[5] = display.newImageRect("이미지/채팅창/채팅창주인공.png",1920,1080)
 	
-	--[[local function page(event)
+	--처음 등장할 캐릭터 외의 채팅창들은 투명도를 0으로
+	for i=2,5 do
+		t[i].alpha=0
+	end
+	--모든 채팅창 객체는 씬그룹에 넣기
+	for i=1,5 do
+		t[i].x = display.contentWidth /2
+		t[i].y = display.contentHeight / 2
+		sceneGroup:insert(t[i])
+	end
 
-        composer.removeScene( "view1" )
-        composer.setVariable("complete", true)
-        composer.gotoScene("view2")
-
+	--채팅 배열
+	local chatting={}
+	--텍스트 배열
+    local text={
+    	"자! 다들 먹고 싶은 거 편히 말해봐!",
+		"난 도토리 케이크!",
+		"난 연어파이..",
+		"그럼 난 당근수프!",
+		"좋아 ! 다들 주방으로 따라와",
+    }
+    --채팅 배열에 텍스트 배열 넣기 setFillColor(0)=검정색 글씨
+    for i=1,5 do
+    	chatting[i]=display.newText(text[i],display.contentWidth*0.2,display.contentHeight*0.8)
+    	chatting[i]:setFillColor(0)
+    	chatting[i].size=50
     end
-	forlog:addEventListener("tap",page)]]
+    --처음 등장할 대사 외의 대사들은 투명도를 0으로
+    for i=2,5 do
+    	chatting[i].alpha=0
+    end
+ 	
+ 	--클릭변수
+	local j=1
+
+	--클릭함수
+	local function click(event)
+		--탭할때마다 클릭변수 증가
+		j=j+1
+		--클릭할때마다 전의 이미지(캐릭터,채팅창,대사)들의 투명도는 0으로 등장해야할 이미지의 투명도를 1로
+		if j>1 and j<=5 then
+			c[j-1].alpha=0
+			t[j-1].alpha=0
+			chatting[j-1].alpha=0
+			c[j].alpha=1
+			t[j].alpha=1
+			chatting[j].alpha=1
+		end
+
+		--모든 이미지들이 끝났으면 씬이동
+		if j==6 then 
+			composer.removeScene( "view2" )
+        	composer.setVariable("complete", true)
+        	local options={
+				effect ="fade",
+				time=400
+			}
+        	composer.gotoScene("view3",options)
+        end
+
+	end
+	background:addEventListener("tap",click)
 end
 
 function scene:show( event )

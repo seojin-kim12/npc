@@ -10,23 +10,7 @@ local scene = composer.newScene()
 function scene:create( event )
 	local sceneGroup = self.view
 	
-	--배경
-	local background = display.newImage("이미지/시작화면/시작화면.png")
-	background.x = display.contentWidth / 2
-	background.y = display.contentHeight / 2
-	sceneGroup:insert(background)
 
-	local function click(event)
-		
-			composer.removeScene( "viewstartView" )
-        	composer.setVariable("complete", true)
-        	local options={
-				effect ="fade",
-				time=400
-			}
-        	composer.gotoScene("view1",options)
-    end
-	background:addEventListener("tap",click)
 end
 
 function scene:show( event )
