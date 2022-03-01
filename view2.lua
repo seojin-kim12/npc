@@ -42,11 +42,11 @@ function scene:create( event )
 	--채팅창 배열 생성
 	local t={}
 	--채팅창 배열에 채팅창 이미지 담기
-	t[1] = display.newImageRect("이미지/채팅창/채팅창주인공.png",1920,1080)
-	t[2] = display.newImageRect("이미지/채팅창/채팅창다람쥐.png",1920,1080)
-	t[3] = display.newImageRect("이미지/채팅창/채팅창곰.png",1920,1080)
-	t[4] = display.newImageRect("이미지/채팅창/채팅창토끼.png",1920,1080)
-	t[5] = display.newImageRect("이미지/채팅창/채팅창주인공.png",1920,1080)
+	t[1] = display.newImage("이미지/채팅창/채팅창주인공.png")
+	t[2] = display.newImage("이미지/채팅창/채팅창다람쥐.png")
+	t[3] = display.newImage("이미지/채팅창/채팅창곰.png")
+	t[4] = display.newImage("이미지/채팅창/채팅창토끼.png")
+	t[5] = display.newImage("이미지/채팅창/채팅창주인공.png")
 	
 	--처음 등장할 캐릭터 외의 채팅창들은 투명도를 0으로
 	for i=2,5 do
@@ -55,7 +55,7 @@ function scene:create( event )
 	--모든 채팅창 객체는 씬그룹에 넣기
 	for i=1,5 do
 		t[i].x = display.contentWidth /2
-		t[i].y = display.contentHeight / 2
+		t[i].y = display.contentHeight * 0.79
 		sceneGroup:insert(t[i])
 	end
 
@@ -67,13 +67,15 @@ function scene:create( event )
 		"난 도토리 케이크!",
 		"난 연어파이..",
 		"그럼 난 당근수프!",
-		"좋아 ! 다들 주방으로 따라와",
+		"좋아 ! 여기서 딱 기다려~ 금방 준비해 올 테니까!!",
     }
     --채팅 배열에 텍스트 배열 넣기 setFillColor(0)=검정색 글씨
     for i=1,5 do
-    	chatting[i]=display.newText(text[i],display.contentWidth*0.2,display.contentHeight*0.8)
+    	chatting[i]=display.newText(text[i],display.contentWidth*0.132,display.contentHeight*0.78)
     	chatting[i]:setFillColor(0)
     	chatting[i].size=50
+    	chatting[i].anchorX,chatting[i].anchorY=0,0
+    	sceneGroup:insert(chatting[i])
     end
     --처음 등장할 대사 외의 대사들은 투명도를 0으로
     for i=2,5 do
@@ -100,12 +102,13 @@ function scene:create( event )
 		--모든 이미지들이 끝났으면 씬이동
 		if j==6 then 
 			composer.removeScene( "view2" )
+			audio.pause( soundTable["chattSound"])
         	composer.setVariable("complete", true)
         	local options={
 				effect ="fade",
 				time=400
 			}
-        	composer.gotoScene("view3",options)
+        	composer.gotoScene("salmon1",options)
         end
 
 	end

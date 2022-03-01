@@ -9,13 +9,19 @@ local scene = composer.newScene()
 
 function scene:create( event )
 	local sceneGroup = self.view
-
+	audio.pause( soundTable["firstSound"])
+	audio.play( soundTable["chattSound"] )
 
 	--배경
-	local background = display.newImage("이미지/배경/숲배경.jpg")
+	local background = display.newImage("이미지/배경/숲속배경.png")
 	background.x = display.contentWidth / 2
 	background.y = display.contentHeight / 2
 	sceneGroup:insert(background)
+
+	local time = 0
+	local function timeAttack(event)
+		time = time + 1
+	end
 
 	--캐릭터 배열
 	local c={}
@@ -36,11 +42,11 @@ function scene:create( event )
 
 	--채팅창 배열
 	local t={}
-	t[1] = display.newImageRect("이미지/채팅창/채팅창주인공.png",1920,1080)
-	t[2] = display.newImageRect("이미지/채팅창/채팅창토끼.png",1920,1080)
-	t[3] = display.newImageRect("이미지/채팅창/채팅창다람쥐.png",1920,1080)
-	t[4] = display.newImageRect("이미지/채팅창/채팅창곰.png",1920,1080)
-	t[5] = display.newImageRect("이미지/채팅창/채팅창주인공.png",1920,1080)
+	t[1] = display.newImage("이미지/채팅창/채팅창주인공.png",1920,1080)
+	t[2] = display.newImage("이미지/채팅창/채팅창토끼.png",1920,1080)
+	t[3] = display.newImage("이미지/채팅창/채팅창다람쥐.png",1920,1080)
+	t[4] = display.newImage("이미지/채팅창/채팅창곰.png",1920,1080)
+	t[5] = display.newImage("이미지/채팅창/채팅창주인공.png",1920,1080)
 
 	t[1].alpha=1
 	for i=2,5 do
@@ -48,14 +54,14 @@ function scene:create( event )
 	end
 	for i=1,5 do
 		t[i].x = display.contentWidth /2
-		t[i].y = display.contentHeight / 2
+		t[i].y = display.contentHeight * 0.79
 		sceneGroup:insert(t[i])
 	end
 
 	--채팅 배열
 	local chatting={}
 	local text={
-		"애들아 다들 와줘서 고마워~!",
+		"얘들아 다들 와줘서 고마워~!",
 		"새삼스럽게 뭘~",
 		"오늘은 또 무슨 요리를 해 줄거야?",
 		"오늘만 손꼽아 기다렸어..!",
@@ -63,9 +69,11 @@ function scene:create( event )
 	}
 
 	for i=1,5 do
-        chatting[i]=display.newText(text[i],display.contentWidth*0.3,display.contentHeight*0.8)
+        chatting[i]=display.newText(text[i],display.contentWidth*0.13,display.contentHeight*0.78)
         chatting[i]:setFillColor(0)
         chatting[i].size=50
+        chatting[i].anchorX,chatting[i].anchorY=0,0
+        sceneGroup:insert(chatting[i])
     end
     for i=2,5 do
         chatting[i].alpha=0
@@ -73,28 +81,29 @@ function scene:create( event )
  
     local j=1
     local function click(event)
-        j=j+1
-        if j>1 and j<=5 then
-            c[j-1].alpha=0
-            t[j-1].alpha=0
-            chatting[j-1].alpha=0
-            c[j].alpha=1
-            t[j].alpha=1
-            chatting[j].alpha=1
-        end
+       		j=j+1
+	        if j>1 and j<=5 then
+	            c[j-1].alpha=0
+	            t[j-1].alpha=0
+	            chatting[j-1].alpha=0
+	            c[j].alpha=1
+	            t[j].alpha=1
+	            chatting[j].alpha=1
+	        end
 
-        if j==6 then 
-        	chatting[5].alpha=0
-            composer.removeScene( "view1" )
-            composer.setVariable("complete", true)
-            local options={
-                effect ="fade",
-                time=400
-            }
-            composer.gotoScene("view2",options)
-        end
+	        if j==6 then 
+	        	chatting[5].alpha=0
+			    composer.removeScene( "view1" )
+			    composer.setVariable("complete", true)
+			    local options={
+			        effect ="fade",
+			        time=400
+			    }
+			     composer.gotoScene("view2",options)    		
+	        end
+    	end
 
-    end
+    
     background:addEventListener("tap",click)
 end
 

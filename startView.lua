@@ -9,6 +9,9 @@ local scene = composer.newScene()
 
 function scene:create( event )
 	local sceneGroup = self.view
+
+	audio.play( soundTable["firstSound"] )
+
 	
 	--배경
 	local background = display.newImage("이미지/시작화면/시작화면.png")
@@ -17,14 +20,13 @@ function scene:create( event )
 	sceneGroup:insert(background)
 
 	local function click(event)
-		
-			composer.removeScene( "viewstartView" )
-        	composer.setVariable("complete", true)
-        	local options={
-				effect ="fade",
-				time=400
-			}
-        	composer.gotoScene("view1",options)
+		composer.removeScene( "startView" )
+		composer.setVariable("complete", true)
+		local options={
+			effect ="fade",
+			time=1000
+		}
+		 composer.gotoScene("view1",options)  
     end
 	background:addEventListener("tap",click)
 end

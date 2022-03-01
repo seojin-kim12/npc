@@ -9,6 +9,7 @@ local scene = composer.newScene()
 
 function scene:create( event )
 	local sceneGroup = self.view
+	audio.play( soundTable["playSound"],{ loops=-1 } )
 
 	--배경
 	local background = display.newImage("이미지/배경/요리테이블.png")
@@ -20,31 +21,33 @@ function scene:create( event )
 	bowl.x = display.contentWidth / 2
 	bowl.y = display.contentHeight *0.59
 	sceneGroup:insert(bowl)
-
 	
 
 	--재료 배열 생성
 	local c={}
-	c[1] = display.newImageRect("이미지/연어파이재료/달걀.png",100,137)
-	c[2] = display.newImageRect("이미지/연어파이재료/밀가루.png",225,172)
-	c[3] = display.newImageRect("이미지/연어파이재료/버터.png",204,156)
-	c[4] = display.newImageRect("이미지/연어파이재료/설탕.png",100,191)
-	c[5] = display.newImageRect("이미지/연어파이재료/우유.png",150,216)
+	c[1] = display.newImageRect("이미지/연어파이/연어파이재료/달걀.png",464*0.3,645*0.3)
+	c[2] = display.newImageRect("이미지/연어파이/연어파이재료/밀가루.png",494*0.6,362*0.6)
+	c[3] = display.newImageRect("이미지/연어파이/연어파이재료/버터.png",204*1.1,156*1.1)
+	c[4] = display.newImageRect("이미지/연어파이/연어파이재료/설탕.png",100*1.1,191*1.1)
+	c[5] = display.newImageRect("이미지/연어파이/연어파이재료/우유.png",150,216)
 
 	for i=1,5 do
-		c[i].x=display.contentWidth *i*0.1
+		c[i].x=display.contentWidth *i*0.12
 		c[i].y=display.contentHeight *0.11
 		sceneGroup:insert(c[i])
 	end
 
+	c[1].x= display.contentWidth *0.08
+	c[2].x=	display.contentWidth *0.215
+
 
 	--볼재료 배열 생성
 	local b={}
-	b[1] = display.newImageRect("이미지/연어파이재료/볼재료/달걀.png",100,137)
-	b[2] = display.newImageRect("이미지/연어파이재료/볼재료/밀가루.png",225,172)
-	b[3] = display.newImageRect("이미지/연어파이재료/볼재료/버터.png",204,156)
-	b[4] = display.newImageRect("이미지/연어파이재료/볼재료/설탕.png",100,191)
-	b[5] = display.newImageRect("이미지/연어파이재료/볼재료/우유.png",150,216)
+	b[1] = display.newImageRect("이미지/연어파이/연어파이재료/볼재료/달걀.png",205,110)
+	b[2] = display.newImageRect("이미지/연어파이/연어파이재료/볼재료/밀가루.png",225,172)
+	b[3] = display.newImageRect("이미지/연어파이/연어파이재료/볼재료/버터.png",204,156)
+	b[4] = display.newImageRect("이미지/연어파이/연어파이재료/볼재료/설탕.png",218,177)
+	b[5] = display.newImageRect("이미지/연어파이/연어파이재료/볼재료/우유.png",342,85)
 	for i=1,5 do
 		b[i].alpha=0
 		b[i].x=display.contentWidth *i*0.1
@@ -52,25 +55,49 @@ function scene:create( event )
 		sceneGroup:insert(b[i])
 	end
 
+	--레시피 불러오기
+	local option = {
+		isModal = true
+	}
 
-	--채팅1
-	local t1 = display.newImageRect("이미지/채팅창/채팅창주인공.png",1920,1080)
-	t1.x=display.contentWidth /2
-	t1.y=display.contentHeight /2
-	sceneGroup:insert(t1)
+    local function tutorial(event)
+		if event.phase == "began" then
+			audio.play(soundTable["button4Sound"])
+			composer.showOverlay("pierecipe",option)
+		end
+	end
 
-	local chatting1=display.newText("먼저, 파이의 반죽을 만들어야해.\n재료를 볼에 넣어보자.",display.contentWidth*0.29,display.contentHeight*0.815)
-    chatting1:setFillColor(0)
-    chatting1.size=50
-    sceneGroup:insert(chatting1)
+	local recipe = display.newImage("이미지/레시피버튼.png")
+	recipe.x, recipe.y = display.contentWidth*0.9, display.contentHeight*0.08
+	sceneGroup:insert(recipe)
+	recipe:addEventListener("touch",tutorial)
 
+	--객체에 마우스를 올리면 커지고 떼면 작아짐
+	local i = 0
+	local function big (event)
+		
+		if (event.target.x-event.x)^2 + (event.target.y-event.y)^2 < 70^2 then
+			-- i값을 지정해 놓는 이유는 범위 안에서는 크기가 더 늘어나거나 줄어들지 않고, 소리가 연이어 나오지 않음.
+			if i == 0 then
+				audio.play( soundTable["mouseSound"] )
+				event.target.width = event.target.width*1.2
+				event.target.height = event.target.height*1.2
+				i = i + 1
+			end
+		
+		elseif (event.target.x-event.x)^2 + (event.target.y-event.y)^2 > 70^2 then
+			if i == 1 then
+				event.target.width =event.target.width/12*10
+				event.target.height =event.target.height/12*10
+				i = i - 1 
+			end
+			
+		end
+	end
+	for i=1,5 do 
+		c[i]:addEventListener("mouse",big)
+	end
 
-    --채팅삭제
-    local function next(event)	
-		t1.alpha=0
-		chatting1.alpha=0
-    end
-	t1:addEventListener("tap",next)
 
 
 	--재료 드래그
@@ -79,9 +106,6 @@ function scene:create( event )
 	local function catch( event )
 		if ( event.phase == "began" ) then
 			display.getCurrentStage():setFocus( event.target )
-			--드래그 시작시 채팅 사라짐
-			t1.alpha=0
-			chatting1.alpha=0
 			event.target.isFocus = true
 		elseif ( event.phase == "moved" ) then
 			if ( event.target.isFocus ) then
@@ -93,6 +117,7 @@ function scene:create( event )
 			if event.target.x < bowl.x + 450 and event.target.x > bowl.x - 450
 				and event.target.y < bowl.y + 300 and event.target.y > bowl.y - 300 then
 					--재료와 위치가 바뀜
+					audio.play( soundTable["dropSound"] )
 					event.target.alpha=0
 					b[i].alpha=1
 					b[i].x=event.xStart + event.xDelta
@@ -109,8 +134,10 @@ function scene:create( event )
 			display.getCurrentStage():setFocus( nil )
 			event.target.isFocus = false
 		end
+
 		--모든 재료가 볼에 들어가면
 		if check==5 then
+
 			--볼의 재료는 사라지고
 			for i=1,5 do
 				b[i].alpha=0
@@ -121,41 +148,43 @@ function scene:create( event )
 			bowl2.y = display.contentHeight *0.59
 			sceneGroup:insert(bowl2)
 
-			local check2=0
-
 			--채팅 및 다음씬
 			local function next(event)	
-				check2=check2+1
-				if check2==1 then
-					local t2 = display.newImageRect("이미지/채팅창/채팅창주인공.png",1920,1080)
-					t2.x=display.contentWidth /2
-					t2.y=display.contentHeight /2
-					sceneGroup:insert(t2)
-					local chatting2=display.newText("좋아! 이제 파이에 넣을 재료를 손질해볼까?",display.contentWidth*0.31,display.contentHeight*0.8)
-    				chatting2:setFillColor(0)
-    				chatting2.size=50
-    				sceneGroup:insert(chatting2)
-				end
-				if check2==2 then
-					composer.removeScene( "salmon1" )
-        			composer.setVariable("complete", true)
-        			local options={
-						effect ="fade",
-						time=400
-					}
-        			composer.gotoScene("salmon2",options)
-        		end
-    		end
-			background:addEventListener("tap",next)
+				bowl2.alpha=0
+				bowl.alpha=0
+				composer.removeScene( "salmon1" )
+        		composer.setVariable("complete", true)
+        		local options={
+					effect ="fade",
+					time=400
+				}
+        		composer.gotoScene("salmon2",options)
+        	end
+    		
+			bowl2:addEventListener("tap",next)
+		
 		end
 	end
 	c[i]:addEventListener("touch", catch)
 
+end
+
+--레시피 불러오기
+	local option = {
+		isModal = true
+	}
+
+    local function tutorial(event)
+		if event.phase == "began" then
+			composer.showOverlay("pierecipe",option)
+		end
 	end
 
+	local recipe = display.newImage("이미지/레시피버튼.png")
+	recipe.x, recipe.y = display.contentWidth*0.9, display.contentHeight*0.08
+	sceneGroup:insert(recipe)
+	recipe:addEventListener("touch",tutorial)
 	
-
-
 end
 function scene:show( event )
 	local sceneGroup = self.view
